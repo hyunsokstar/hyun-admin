@@ -3,7 +3,8 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import HeaderMenus from "@/components/CommonHeaderMenu";
-import TanstackQueryProvider from "@/components/provider/TanstackQueryProvider"; // 추가
+import TanstackQueryProvider from "@/components/provider/TanstackQueryProvider";
+import ToastProvider from "@/components/provider/ToastProvider"; // 추가
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -32,10 +33,12 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <TanstackQueryProvider>
-          <HeaderMenus />
-          {children}
-        </TanstackQueryProvider>
+        <ToastProvider> {/* ToastProvider 추가 */}
+          <TanstackQueryProvider>
+            <HeaderMenus />
+            {children}
+          </TanstackQueryProvider>
+        </ToastProvider>
       </body>
     </html>
   );

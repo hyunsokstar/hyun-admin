@@ -1,5 +1,4 @@
 // src/components/dialog/DialogButtonForLogin.tsx
-
 'use client';
 
 import * as React from 'react';
@@ -26,7 +25,6 @@ const loginSchema = z.object({
     password: z.string().min(3, { message: "비밀번호는 최소 3자 이상이어야 합니다." }),
 });
 
-// 로그인 폼 값 타입 정의
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 const DialogButtonForLogin: React.FC = () => {
@@ -39,8 +37,15 @@ const DialogButtonForLogin: React.FC = () => {
         },
     });
 
-    const handleLogin = (data: LoginFormValues) => {
-        loginMutation.mutate({ userId: data.userId, password: data.password });
+    const handleLogin = async (data: LoginFormValues) => {
+        // 데이터 정제
+        const cleanedData = {
+            userId: data.userId.trim(),
+            password: data.password.trim()
+        };
+
+        console.log('Form data before mutation:', cleanedData);
+        loginMutation.mutate(cleanedData);
     };
 
     return (
@@ -107,7 +112,11 @@ const DialogButtonForLogin: React.FC = () => {
                                     )}
                                 />
 
-                                <Button type="submit" className="w-full bg-blue-500 hover:bg-blue-600 text-white mt-6" disabled={loginMutation.isPending}>
+                                <Button
+                                    type="submit"
+                                    className="w-full bg-blue-500 hover:bg-blue-600 text-white mt-6"
+                                    disabled={loginMutation.isPending}
+                                >
                                     {loginMutation.isPending ? 'Logging in...' : 'Sign In'}
                                 </Button>
                             </form>
