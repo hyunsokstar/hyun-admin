@@ -1,3 +1,4 @@
+// src/components/HeaderMenus.tsx
 "use client";
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -6,19 +7,13 @@ import { Card } from '@/components/ui/card';
 import { ADMIN_MENU_ITEMS, MenuItemType } from '@/app/constants/menu';
 import DialogButtonForLogin from '../dialog/DialogButtonForLoginForm';
 
-// 전체 경로를 생성하는 유틸리티 함수
-const getFullPath = (menu: MenuItemType, parentPath: string = ''): string => {
-    return parentPath ? `${parentPath}/${menu.path}` : menu.path;
-};
-
 export default function HeaderMenus() {
     const [openMenus, setOpenMenus] = useState<Set<string>>(new Set());
     const router = useRouter();
 
-    const handleMenuClick = (menu: MenuItemType, parentPath: string = '') => {
-        const fullPath = getFullPath(menu, parentPath);
-        if (fullPath && !menu.items?.length) {
-            router.push(`/${fullPath}`);
+    const handleMenuClick = (path: string) => {
+        if (path) {
+            router.push(`/${path}`);
             setOpenMenus(new Set());
         }
     };
@@ -39,7 +34,8 @@ export default function HeaderMenus() {
         });
     };
 
-    const renderSubMenuItems = (menu: MenuItemType, parentPath: string = '', depth: number = 0) => {
+    // 재귀적으로 하위 메뉴를 렌더링
+    const renderSubMenuItems = (menu: MenuItemType, currentPath: string = '', depth: number = 0) => {
         if (!menu.items || menu.items.length === 0) return null;
 
         const isFirstLevel = depth === 0;
@@ -59,8 +55,8 @@ export default function HeaderMenus() {
             ? { opacity: 0, y: -10 }
             : { opacity: 0, x: -10 };
 
-        const currentPath = getFullPath(menu, parentPath);
-        const isOpen = openMenus.has(currentPath);
+        const fullPath = currentPath ? `${currentPath}/${menu.path}` : menu.path;
+        const isOpen = openMenus.has(fullPath);
 
         return (
             <AnimatePresence>
@@ -77,7 +73,7 @@ export default function HeaderMenus() {
                                 {menu.items
                                     .sort((a, b) => a.sort_order - b.sort_order)
                                     .map((subMenu) => {
-                                        const subPath = getFullPath(subMenu, currentPath);
+                                        const subPath = `${fullPath}/${subMenu.path}`;
                                         return (
                                             <li
                                                 key={subPath}
@@ -86,7 +82,7 @@ export default function HeaderMenus() {
                                                 onMouseLeave={() => handleMouseLeave(subPath)}
                                             >
                                                 <button
-                                                    onClick={() => handleMenuClick(subMenu, currentPath)}
+                                                    onClick={() => handleMenuClick(subPath)}
                                                     className={`w-full text-left px-4 py-2 text-sm rounded-lg
                                                         ${openMenus.has(subPath)
                                                             ? 'bg-blue-50 text-blue-600'
@@ -98,7 +94,7 @@ export default function HeaderMenus() {
                                                         <span className="float-right">›</span>
                                                     )}
                                                 </button>
-                                                {renderSubMenuItems(subMenu, currentPath, depth + 1)}
+                                                {renderSubMenuItems(subMenu, fullPath, depth + 1)}
                                             </li>
                                         );
                                     })}
@@ -110,6 +106,7 @@ export default function HeaderMenus() {
         );
     };
 
+    // 최상위 메뉴 렌더링
     const renderMenuItems = (items: MenuItemType[]) => {
         return (
             <ul className="flex space-x-6">
@@ -127,7 +124,7 @@ export default function HeaderMenus() {
                                 onMouseLeave={() => handleMouseLeave(currentPath)}
                             >
                                 <button
-                                    onClick={() => handleMenuClick(menu)}
+                                    onClick={() => handleMenuClick(menu.path)}
                                     className={`px-4 py-2 text-sm font-medium rounded-lg
                                         transition-all duration-300 ease-in-out
                                         relative overflow-hidden
@@ -155,7 +152,7 @@ export default function HeaderMenus() {
                 <div className="flex space-x-6">
                     {renderMenuItems(ADMIN_MENU_ITEMS)}
                 </div>
-                <div><DialogButtonForLogin /></div>
+                <DialogButtonForLogin />
             </nav>
         </Card>
     );

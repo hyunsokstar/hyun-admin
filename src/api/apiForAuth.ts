@@ -8,7 +8,9 @@ const instance = axios.create({
     withCredentials: true, // CORS 요청에 인증 정보를 포함하도록 설정
     headers: {
         "Content-Type": "application/json",
-        "Accept": "application/json" // 서버에서 JSON 응답을 기대
+        "Accept": "application/json", // 서버에서 JSON 응답을 기대
+        "Cache-Control": "no-cache", // 캐시 방지 설정 추가
+        "Pragma": "no-cache",        // 캐시 방지 설정 추가 (HTTP/1.0 호환성)
     }
 });
 

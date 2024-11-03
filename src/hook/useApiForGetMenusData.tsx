@@ -1,4 +1,4 @@
-import apiForGetMenusData, { MenuItemType } from '@/api/apiForMenu';
+// import apiForGetMenusData, { MenuItemType } from '@/api/apiForMenu';
 import { useQuery } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 
