@@ -1,12 +1,16 @@
+// C:\dankkum-admin\src\app\layout.tsx
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import HeaderMenus from "@/components/CommonHeaderMenu";
+import TanstackQueryProvider from "@/components/provider/TanstackQueryProvider"; // 추가
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
   weight: "100 900",
 });
+
 const geistMono = localFont({
   src: "./fonts/GeistMonoVF.woff",
   variable: "--font-geist-mono",
@@ -28,7 +32,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <TanstackQueryProvider>
+          <HeaderMenus />
+          {children}
+        </TanstackQueryProvider>
       </body>
     </html>
   );
